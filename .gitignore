@@ -1,0 +1,14 @@
+# Environment files
+.env
+.env.*
+
+# Backend dependencies
+/backend/node_modules/
+/backend/package-lock.json
+
+# Frontend (optional if exists)
+#/frontend/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
