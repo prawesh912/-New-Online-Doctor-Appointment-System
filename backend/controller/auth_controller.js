@@ -1,5 +1,6 @@
 import { pool } from '../config/db_config.js';
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
 
 export const loginPatient = async (req, res) => {
     try {
@@ -14,7 +15,7 @@ export const loginPatient = async (req, res) => {
 
         // Check user by email OR phone
         const [users] = await pool.query(
-            `SELECT * FROM patients WHERE email = ? OR phone_number = ?`,
+            `SELECT * FROM users WHERE email = ? OR phone_number = ?`,
             [identifier, identifier]
         );
 
@@ -39,9 +40,24 @@ export const loginPatient = async (req, res) => {
         // Remove password before sending response
         delete user.password;
 
+        // const payload = {
+        //     id: superAdmin._id,
+        //     email: superAdmin.email,
+        //     name: superAdmin.name,
+        //     role: superAdmin.role,
+        //     fbToken: superAdmin.fbToken
+        // }
+
+        const token = jwt.sign(
+            user,
+            process.env.JWT_SECRET,
+            { expiresIn: '30d'}
+        )
+
         return res.status(200).json({
             success: true,
             message: "Login successful",
+            token,
             user: user
         });
 
