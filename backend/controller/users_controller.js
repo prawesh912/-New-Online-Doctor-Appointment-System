@@ -1,7 +1,8 @@
 import { pool } from '../config/db_config.js';
+import ROLES from '../constants/roles.js';
 import bcrypt from "bcrypt";
 
-export const getAllPatients = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
         const [patients] = await pool.query(
             `SELECT 
@@ -14,8 +15,9 @@ export const getAllPatients = async (req, res) => {
                 email,
                 phone_number,
                 profile_image,
+                role,
                 created_at
-             FROM patients`
+             FROM users`
         );
 
         return res.status(200).json({
@@ -32,7 +34,7 @@ export const getAllPatients = async (req, res) => {
     }
 };
 
-export const getPatientById = async (req, res) => {
+export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -54,8 +56,9 @@ export const getPatientById = async (req, res) => {
                 email,
                 phone_number,
                 profile_image,
+                role,
                 created_at
-             FROM patients 
+             FROM users 
              WHERE id = ?`,
             [id]
         );
@@ -80,7 +83,7 @@ export const getPatientById = async (req, res) => {
     }
 };
 
-export const createPatient = async (req, res) => {
+export const createUser = async (req, res) => {
     try {
         const {
             first_name,
@@ -92,6 +95,7 @@ export const createPatient = async (req, res) => {
             phone_number,
             profile_image,
             password,
+            role,
             confirm_password
         } = req.body;
 
@@ -101,6 +105,11 @@ export const createPatient = async (req, res) => {
                 success: false,
                 message: "All required fields must be provided"
             });
+        }
+
+         // Validate role
+        if (!Object.values(ROLES).includes(role)) {
+            return res.status(400).json({ message: "Invalid role" });
         }
 
         // Password match check
@@ -113,7 +122,7 @@ export const createPatient = async (req, res) => {
 
         // Check if email already exists
         const [existingUser] = await pool.query(
-            "SELECT * FROM patients WHERE email = ?",
+            "SELECT * FROM users WHERE email = ?",
             [email]
         );
 
@@ -129,10 +138,10 @@ export const createPatient = async (req, res) => {
 
         // Insert patient
         const [result] = await pool.query(
-            `INSERT INTO patients 
-            (first_name, last_name, age, dob, address, email, phone_number, profile_image, password) 
-            VALUES (?,?,?,?,?,?,?,?,?)`,
-            [first_name, last_name, age, dob, address, email, phone_number, profile_image, hashedPassword]
+            `INSERT INTO users 
+            (first_name, last_name, age, dob, address, email, phone_number, profile_image, role, password) 
+            VALUES (?,?,?,?,?,?,?,?,?,?)`,
+            [first_name, last_name, age, dob, address, email, phone_number, profile_image, role, hashedPassword]
         );
 
         return res.status(201).json({
@@ -149,7 +158,7 @@ export const createPatient = async (req, res) => {
     }
 };
 
-export const deletePatientById = async (req, res) => {
+export const deleteUserById = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -161,7 +170,7 @@ export const deletePatientById = async (req, res) => {
         }
 
         const [existingPatient] = await pool.query(
-            "SELECT id FROM patients WHERE id = ?",
+            "SELECT id FROM users WHERE id = ?",
             [id]
         );
 
