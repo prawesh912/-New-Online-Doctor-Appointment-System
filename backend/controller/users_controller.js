@@ -4,26 +4,31 @@ import bcrypt from "bcrypt";
 
 export const getAllUsers = async (req, res) => {
     try {
-        const [patients] = await pool.query(
+        const [users] = await pool.query(
             `SELECT 
                 id,
                 first_name,
                 last_name,
-                age,
-                dob,
-                address,
+                dob_bs,
+                dob_ad,
+                province,
+                district,
+                city,
+                ward,
+                tole,
                 email,
                 phone_number,
                 profile_image,
                 role,
+                category_id,
                 created_at
              FROM users`
         );
 
         return res.status(200).json({
             success: true,
-            count: patients.length,
-            patients: patients
+            count: users.length,
+            users: users
         });
 
     } catch (err) {
@@ -41,38 +46,43 @@ export const getUserById = async (req, res) => {
         if (!id) {
             return res.status(400).json({
                 success: false,
-                message: "Patient ID is required"
+                message: "User ID is required"
             });
         }
 
-        const [patients] = await pool.query(
+        const [user] = await pool.query(
             `SELECT 
                 id,
                 first_name,
                 last_name,
-                age,
-                dob,
-                address,
+                dob_bs,
+                dob_ad,
+                province,
+                district,
+                city,
+                ward,
+                tole,
                 email,
                 phone_number,
                 profile_image,
                 role,
+                category_id,
                 created_at
              FROM users 
              WHERE id = ?`,
             [id]
         );
 
-        if (patients.length === 0) {
+        if (user.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "Patient not found"
+                message: "User not found"
             });
         }
 
         return res.status(200).json({
             success: true,
-            patient: patients[0]
+            user: user[0]
         });
 
     } catch (err) {
@@ -88,35 +98,44 @@ export const createUser = async (req, res) => {
         const {
             first_name,
             last_name,
-            age,
-            dob,
-            address,
+            dob_bs,
+            dob_ad,
+            province,
+            district,
+            city,
+            ward,
+            tole,
             email,
             phone_number,
             profile_image,
             password,
             role,
+            category_id,
             confirm_password
         } = req.body;
 
         // Validation
-        if (!first_name || !last_name || !age || !address || !email || !phone_number || !password || !confirm_password) {
+        if (!first_name || !last_name || !province || !district || !city || !ward || !email || !phone_number || !password || !confirm_password) {
             return res.status(400).json({
                 success: false,
                 message: "All required fields must be provided"
             });
         }
 
+        if(!dob_bs && !dob_ad) return res.status(400).json({success: false, message: "Please fill dob in BS or AD is required"});
+
          // Validate role
         if (!Object.values(ROLES).includes(role)) {
             return res.status(400).json({ message: "Invalid role" });
         }
 
+        if(role == ROLES.DOCTOR && !category_id) return res.status(400).json({success: false, message: "Category id is required for role doctor"});
+
         // Password match check
         if (password !== confirm_password) {
             return res.status(400).json({
                 success: false,
-                message: "Passwords do not match"
+                message: "Passwords and confirm password do not match"
             });
         }
 
@@ -136,18 +155,18 @@ export const createUser = async (req, res) => {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insert patient
+        // Insert user
         const [result] = await pool.query(
             `INSERT INTO users 
-            (first_name, last_name, age, dob, address, email, phone_number, profile_image, role, password) 
-            VALUES (?,?,?,?,?,?,?,?,?,?)`,
-            [first_name, last_name, age, dob, address, email, phone_number, profile_image, role, hashedPassword]
+            (first_name, last_name, dob_bs, dob_ad, province, district, city, ward, tole, email, phone_number, profile_image, role, category_id, password) 
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [first_name, last_name, dob_bs, dob_ad, province, district, city, ward, tole, email, phone_number, profile_image, role, category_id, hashedPassword]
         );
 
         return res.status(201).json({
             success: true,
-            message: "Patient created successfully",
-            patient_id: result.insertId
+            message: "User created successfully",
+            user_id: result.insertId
         });
 
     } catch (err) {
@@ -165,30 +184,30 @@ export const deleteUserById = async (req, res) => {
         if (!id || isNaN(id)) {
             return res.status(400).json({
                 success: false,
-                message: "Valid patient ID is required"
+                message: "Valid user ID is required"
             });
         }
 
-        const [existingPatient] = await pool.query(
+        const [existingUser] = await pool.query(
             "SELECT id FROM users WHERE id = ?",
             [id]
         );
 
-        if (existingPatient.length === 0) {
+        if (existingUser.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "Patient not found"
+                message: "User not found"
             });
         }
 
         const [result] = await pool.query(
-            "DELETE FROM patients WHERE id = ?",
+            "DELETE FROM users WHERE id = ?",
             [id]
         );
 
         return res.status(200).json({
             success: true,
-            message: "Patient deleted successfully",
+            message: "User deleted successfully",
             affectedRows: result.affectedRows
         });
 
