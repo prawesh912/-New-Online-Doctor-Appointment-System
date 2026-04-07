@@ -1,4 +1,3 @@
-// middleware/verifyRoles.js
 export const verifyRole = (...allowedRoles) => {
     return (req, res, next) => {
         if (!req?.user?.role) {

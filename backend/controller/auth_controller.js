@@ -40,14 +40,6 @@ export const loginPatient = async (req, res) => {
         // Remove password before sending response
         delete user.password;
 
-        // const payload = {
-        //     id: superAdmin._id,
-        //     email: superAdmin.email,
-        //     name: superAdmin.name,
-        //     role: superAdmin.role,
-        //     fbToken: superAdmin.fbToken
-        // }
-
         const token = jwt.sign(
             user,
             process.env.JWT_SECRET,
