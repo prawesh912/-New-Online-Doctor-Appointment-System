@@ -2,6 +2,7 @@ CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(25) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
+    gender ENUM('male', 'female', 'others'),
     dob_bs DATE,
     dob_ad DATE,
     province VARCHAR(25) NOT NULL,

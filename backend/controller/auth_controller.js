@@ -1,8 +1,14 @@
 import { pool } from '../config/db_config.js';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import path from "path";
+import { fileURLToPath } from "url";
 
-export const loginPatient = async (req, res) => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const login = async (req, res) => {
     try {
         const { identifier, password } = req.body;
 
@@ -43,7 +49,7 @@ export const loginPatient = async (req, res) => {
         const token = jwt.sign(
             user,
             process.env.JWT_SECRET,
-            { expiresIn: '30d'}
+            { expiresIn: '7d'}
         )
 
         return res.status(200).json({
@@ -60,3 +66,37 @@ export const loginPatient = async (req, res) => {
         });
     }
 };
+
+export const continueWithGoogleButton = async (req, res) => {
+    try {
+        return res.sendFile(
+            path.join(__dirname, "../templates/index.html")
+        );
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+};
+
+export const continueWithGoogle = async (req, res) => {
+    try{
+        passport.authenticate('google', { scope: ['profile', 'email']})
+    }catch (err){
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+}
+export const continueWithGoogleCallBack = async (req, res) => {
+    try{
+        passport.authenticate('google', { failureRedirect: '/login'});
+    }catch (err){
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+}
