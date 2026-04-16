@@ -1,0 +1,470 @@
+/* =============================================
+   MediBook - Main Stylesheet
+   File: css/style.css
+============================================= */
+
+/* --- CSS VARIABLES (Light & Dark Mode) --- */
+:root {
+  --bg: #f0f4f8;
+  --card: #fff;
+  --nav: #fff;
+  --text: #1a202c;
+  --sub: #64748b;
+  --border: #e2e8f0;
+  --accent: #0ea5e9;
+  --accent2: #0284c7;
+  --btn-text: #fff;
+  --input-bg: #f8fafc;
+  --badge-bg: #e0f2fe;
+  --badge-text: #0369a1;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --green: #10b981;
+  --red: #ef4444;
+  --star: #f59e0b;
+}
+
+.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --nav: #1e293b;
+  --text: #f1f5f9;
+  --sub: #94a3b8;
+  --border: #334155;
+  --accent: #38bdf8;
+  --accent2: #0ea5e9;
+  --btn-text: #0f172a;
+  --input-bg: #1e293b;
+  --badge-bg: #0c4a6e;
+  --badge-text: #7dd3fc;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* --- RESET & BASE --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+a {
+  text-decoration: none;
+  color: var(--accent);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- NAVBAR --- */
+nav {
+  background: var(--nav);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--btn-text);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.nav-btn:hover {
+  background: var(--accent);
+  color: var(--btn-text);
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.nav-btn.primary {
+  background: var(--accent);
+  color: var(--btn-text);
+  border-color: var(--accent);
+}
+
+.nav-btn.primary:hover {
+  background: var(--accent2);
+}
+
+/* Dark Mode Toggle Button */
+.toggle-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  background: var(--border);
+}
+
+/* User Avatar */
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--btn-text);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* User Dropdown Menu */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.user-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 46px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  min-width: 160px;
+  box-shadow: var(--shadow);
+  z-index: 150;
+}
+
+.user-dropdown.open {
+  display: block;
+}
+
+.dd-item {
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+}
+
+.dd-item:hover {
+  background: var(--border);
+  text-decoration: none;
+}
+
+.dd-item.danger {
+  color: var(--red);
+}
+
+/* --- BUTTONS --- */
+.btn {
+  padding: 12px 24px;
+  background: var(--accent);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn:hover {
+  background: var(--accent2);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: var(--btn-text);
+}
+
+.btn.outline {
+  background: none;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+}
+
+.btn.outline:hover {
+  background: var(--accent);
+  color: var(--btn-text);
+}
+
+.btn.sm {
+  padding: 8px 16px;
+  font-size: 13px;
+  border-radius: 7px;
+}
+
+.btn.full {
+  width: 100%;
+  display: block;
+}
+
+/* --- FORM ELEMENTS --- */
+.form-wrap {
+  max-width: 420px;
+  margin: 40px auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--shadow);
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-title .icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.form-title h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.form-title p {
+  color: var(--sub);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--sub);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent);
+}
+
+.form-error {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+
+.form-error.show {
+  display: block;
+}
+
+.form-switch {
+  text-align: center;
+  font-size: 14px;
+  color: var(--sub);
+  margin-top: 16px;
+}
+
+.form-switch a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 20px 0;
+}
+
+/* --- PAGE CONTAINER --- */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* --- SECTION HEADER --- */
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-head h1 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.section-head p {
+  color: var(--sub);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* --- STAT CARDS --- */
+.stats {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.stat-n {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stat-l {
+  font-size: 13px;
+  color: var(--sub);
+  margin-top: 2px;
+}
+
+/* --- BADGE --- */
+.badge {
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* --- EMPTY STATE --- */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--sub);
+}
+
+.empty-state .big {
+  font-size: 52px;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* --- TOAST NOTIFICATION --- */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #1e293b;
+  color: #f1f5f9;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  z-index: 400;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.4s;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 320px;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* --- UTILITY --- */
+.green { color: var(--green); }
+.red   { color: var(--red); }
+.sub   { color: var(--sub); }
+.stars { color: var(--star); }
+.text-center { text-align: center; }
+.mt-8  { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mb-16 { margin-bottom: 16px; }
