@@ -9,6 +9,7 @@ export const getAllUsers = async (req, res) => {
                 id,
                 first_name,
                 last_name,
+                gender,
                 dob_bs,
                 dob_ad,
                 province,
@@ -55,6 +56,7 @@ export const getUserById = async (req, res) => {
                 id,
                 first_name,
                 last_name,
+                gender,
                 dob_bs,
                 dob_ad,
                 province,
@@ -98,6 +100,7 @@ export const createUser = async (req, res) => {
         const {
             first_name,
             last_name,
+            gender,
             dob_bs,
             dob_ad,
             province,
@@ -115,7 +118,7 @@ export const createUser = async (req, res) => {
         } = req.body;
 
         // Validation
-        if (!first_name || !last_name || !province || !district || !city || !ward || !email || !phone_number || !password || !confirm_password) {
+        if (!first_name || !last_name || !gender || !province || !district || !city || !ward || !email || !phone_number || !password || !confirm_password) {
             return res.status(400).json({
                 success: false,
                 message: "All required fields must be provided"
@@ -158,9 +161,9 @@ export const createUser = async (req, res) => {
         // Insert user
         const [result] = await pool.query(
             `INSERT INTO users 
-            (first_name, last_name, dob_bs, dob_ad, province, district, city, ward, tole, email, phone_number, profile_image, role, category_id, password) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-            [first_name, last_name, dob_bs, dob_ad, province, district, city, ward, tole, email, phone_number, profile_image, role, category_id, hashedPassword]
+            (first_name, last_name, gender, dob_bs, dob_ad, province, district, city, ward, tole, email, phone_number, profile_image, role, category_id, password) 
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [first_name, last_name, gender, dob_bs, dob_ad, province, district, city, ward, tole, email, phone_number, profile_image, role, category_id, hashedPassword]
         );
 
         return res.status(201).json({
