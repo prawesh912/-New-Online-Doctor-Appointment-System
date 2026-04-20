@@ -1,3 +1,4 @@
+import * as arctic from "arctic";
 import { pool } from '../config/db_config.js';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
@@ -47,10 +48,13 @@ export const login = async (req, res) => {
         delete user.password;
 
         const token = jwt.sign(
-            user,
+            {
+                userId: user.id,
+                role: user.role
+            },
             process.env.JWT_SECRET,
-            { expiresIn: '7d'}
-        )
+            { expiresIn: '7d' }
+        );
 
         return res.status(200).json({
             success: true,
@@ -66,37 +70,3 @@ export const login = async (req, res) => {
         });
     }
 };
-
-export const continueWithGoogleButton = async (req, res) => {
-    try {
-        return res.sendFile(
-            path.join(__dirname, "../templates/index.html")
-        );
-    } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err.message
-        });
-    }
-};
-
-export const continueWithGoogle = async (req, res) => {
-    try{
-        passport.authenticate('google', { scope: ['profile', 'email']})
-    }catch (err){
-        return res.status(500).json({
-            success: false,
-            message: err.message
-        });
-    }
-}
-export const continueWithGoogleCallBack = async (req, res) => {
-    try{
-        passport.authenticate('google', { failureRedirect: '/login'});
-    }catch (err){
-        return res.status(500).json({
-            success: false,
-            message: err.message
-        });
-    }
-}
