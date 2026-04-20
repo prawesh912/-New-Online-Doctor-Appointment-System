@@ -1,0 +1,35 @@
+CREATE TABLE appointments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    clinic_id INT NOT NULL,
+    doctor_id INT NOT NULL,
+    patient_id INT NOT NULL,
+    receptionist_id INT NULL,
+    slot_id INT,
+
+    appointment_date DATE NOT NULL,
+    appointment_time TIME NOT NULL,
+
+    reason TEXT,
+
+    status ENUM(
+        'pending',
+        'confirmed',
+        'rejected',
+        'rescheduled',
+        'completed',
+        'cancelled'
+    ) DEFAULT 'pending',
+
+    created_by ENUM('patient','receptionist') DEFAULT 'patient',
+
+    notes TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (clinic_id) REFERENCES clinics(id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES users(id),
+    FOREIGN KEY (patient_id) REFERENCES users(id),
+    FOREIGN KEY (receptionist_id) REFERENCES users(id),
+    FOREIGN KEY (slot_id) REFERENCES generated_slots(id)
+);

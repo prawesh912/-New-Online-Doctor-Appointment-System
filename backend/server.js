@@ -6,14 +6,20 @@ import cors from 'cors';
 import session from 'express-session';
 import status from 'express-status-monitor';
 import MySQLStore from "express-mysql2-session";
-import passport from 'passport';
 import { pool, connectDB } from "./config/db_config.js";
-import './auth/google.js';
 
 import test from './routes/test_routes.js';
 import users from './routes/users_routes.js';
 import auth from './routes/auth_routes.js';
 import category from './routes/categories_routes.js';
+import doctor from './routes/doctor_routes.js';
+import receptionists from './routes/receptionists_routes.js';
+import patients from './routes/patients_routes.js';
+import documentCategories from './routes/document_categories_routes.js'
+import doctorKYC from './routes/doctor_kyc_routes.js';
+import adminDoctorKYCVerification from './routes/admin_doctor_kyc_verification_routes.js';
+import clinics from './routes/clinic_routes.js';
+import appointments from './routes/appointment_routes.js';
 
 dotenv.config();
 
@@ -35,6 +41,8 @@ if (cluster.isPrimary) {
 } else {
   // Worker process
   const app = express();
+
+  app.set('view engine', 'ejs');
 
   //* Session START *//
 
@@ -66,9 +74,6 @@ if (cluster.isPrimary) {
     store: sessionStore,
     cookie: { maxAge: 1000 * 60 * 60 * 24}
   }))
-
-  app.use(passport.initialize())
-  app.use(passport.session())
 
   app.get('/api/v1/home', (req, res) => {
     if(req.session.username){
@@ -108,11 +113,20 @@ if (cluster.isPrimary) {
   app.use(express.urlencoded({ extended: false }));
   app.use(cors({ origin: "*" }));
   app.use(express.json());
+  // app.use(express.static('uploads'));
 
-  app.use('/api/v1/test', test);
-  app.use('/api/v1/auth', auth);
-  app.use('/api/v1/users', users);
-  app.use('/api/v1/category', category);
+  app.use('/api/test', test);
+  app.use('/api/auth', auth);
+  app.use('/api/users', users);
+  app.use('/api/category', category);
+  app.use('/api/doctors', doctor);
+  app.use('/api/receptionists', receptionists);
+  app.use('/api/patients', patients);
+  app.use('/api/document-categories', documentCategories);
+  app.use('/api/doctor-kyc', doctorKYC);
+  app.use('/api/admin-doctor-kyc', adminDoctorKYCVerification);
+  app.use('/api/clinics', clinics);
+  app.use('/api/appointments', appointments);
 
   app.use((err, req, res, next) => {
     console.error(err.stack);

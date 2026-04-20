@@ -2,7 +2,7 @@ CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(25) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    gender ENUM('male', 'female', 'others'),
+    gender ENUM('male', 'female', 'others') NOT NULL,
     dob_bs DATE,
     dob_ad DATE,
     province VARCHAR(25) NOT NULL,
@@ -16,6 +16,8 @@ CREATE TABLE users (
     role ENUM('patient', 'doctor', 'admin', 'receptionist') NOT NULL DEFAULT 'patient',
     category_id INT NULL,
     password VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    email_verified BOOLEAN DEFAULT FALSE;
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );

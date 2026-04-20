@@ -1,14 +1,85 @@
 import express from 'express';
-import { getAllUsers, getUserById, createUser, deleteUserById } from '../controller/users_controller.js';
+import {
+    getAllUsers,
+    getUserById,
+    getMyProfile,
+    createUser,
+    createAdminUser,
+    updateUser,
+    deleteUserById
+} from '../controller/users_controller.js';
+
 import { verifyJWT } from '../middleware/verifyJWT.js';
 import { verifyRole } from '../middleware/verifyRoles.js';
+import { verifyOwnershipOrAdmin } from "../middleware/verifyOwnershipOrAdmin.js";
 import ROLES from '../constants/roles.js';
+
+import {
+    setUploadFolder,
+    uploadSingle
+} from '../config/upload_image.js';
 
 const router = express.Router();
 
-router.post('/register', createUser);
-router.get('/', verifyJWT, verifyRole(ROLES.ADMIN, ROLES.DOCTOR, ROLES.RECEPTIONIST), getAllUsers);
-router.get('/:id', verifyJWT, verifyRole(ROLES.ADMIN, ROLES.DOCTOR, ROLES.RECEPTIONIST), getUserById);
-router.delete('/:id', verifyJWT, verifyRole(ROLES.ADMIN), deleteUserById);
+// Public register
+router.post(
+    '/register',
+    setUploadFolder("users"),
+    uploadSingle("profile_image"),
+    createUser
+);
+
+// Admin create user
+router.post(
+    '/admin/create-user',
+    verifyJWT,
+    verifyRole(ROLES.ADMIN),
+    setUploadFolder("users"),
+    uploadSingle("profile_image"),
+    createAdminUser
+);
+
+// Get all users
+router.get(
+    '/',
+    verifyJWT,
+    verifyRole(ROLES.ADMIN),
+    getAllUsers
+);
+
+// My profile
+router.get(
+    '/profile',
+    verifyJWT,
+    verifyRole(ROLES.ADMIN, ROLES.DOCTOR, ROLES.RECEPTIONIST, ROLES.PATIENT),
+    getMyProfile
+);
+
+// Get user by ID
+router.get(
+    '/:id',
+    verifyJWT,
+    verifyRole(ROLES.ADMIN),
+    getUserById
+);
+
+// Update user
+router.put(
+    '/:id',
+    verifyJWT,
+    verifyRole(ROLES.ADMIN, ROLES.DOCTOR, ROLES.RECEPTIONIST, ROLES.PATIENT),
+    verifyOwnershipOrAdmin,
+    setUploadFolder("users"),
+    uploadSingle("profile_image"),
+    updateUser
+);
+
+// Delete user
+router.delete(
+    '/:id',
+    verifyJWT,
+    verifyRole(ROLES.ADMIN),
+    deleteUserById
+);
 
 export default router;

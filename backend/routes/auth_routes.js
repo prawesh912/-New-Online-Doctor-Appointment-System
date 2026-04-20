@@ -1,13 +1,9 @@
 import express from 'express';
-import { login, continueWithGoogleButton, continueWithGoogle, continueWithGoogleCallBack } from '../controller/auth_controller.js';
+import { login } from '../controller/auth_controller.js';
+import { loginLimiter } from '../middleware/rateLimiter.js';
 
 const router = express.Router();
 
-router.post('/login', login);
-router.get('/login/google', continueWithGoogleButton);
-// router.get('/google/login', continueWithGoogle);
-// router.get('/google/callback', continueWithGoogleCallBack, function(req, res){
-//     res.redirect('/');
-// });
+router.post('/login', loginLimiter, login);
 
 export default router;
