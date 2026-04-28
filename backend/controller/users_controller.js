@@ -5,6 +5,8 @@ import { uploadSingle } from '../config/upload_image.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { processAndSaveImage } from "../utils/imageProcessor.js";
+import crypto from "crypto";
+import { sendEmail } from "../utils/sendEmail.js";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -222,17 +224,22 @@ export const createUser = async (req, res) => {
         if (password !== confirm_password)
             return res.status(400).json({ success: false, message: "Passwords do not match" });
 
+        
         // DUPLICATE CHECK
         const [existing] = await pool.query(
             "SELECT email, phone_number FROM users WHERE email = ? OR phone_number = ?",
             [email, phone_number]
         );
-
+        
         if (existing.length)
             return res.status(400).json({
-                success: false,
-                message: "Email or phone already exists"
-            });
+        success: false,
+        message: "Email or phone already exists"
+        });
+    
+        // generate token
+        const token = crypto.randomBytes(32).toString("hex");
+        const expiry = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
 
         // IMAGE
         let profile_image = null;
@@ -258,8 +265,8 @@ export const createUser = async (req, res) => {
         // INSERT
         const [result] = await pool.query(
             `INSERT INTO users 
-            (first_name,last_name,gender,dob_bs,dob_ad,province,district,city,ward,tole,email,phone_number,profile_image,role,category_id,password)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            (first_name,last_name,gender,dob_bs,dob_ad,province,district,city,ward,tole,email,phone_number,profile_image,role,category_id,password,emailVerificationToken,emailVerificationExpires)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
             [
                 first_name, last_name, gender,
                 dob_bs, dob_ad,
@@ -267,9 +274,12 @@ export const createUser = async (req, res) => {
                 email, phone_number,
                 profile_image,
                 role, category_id,
-                hashedPassword
+                hashedPassword,
+                token, expiry
             ]
         );
+
+        const verifyLink = `${process.env.BASE_URL}/api/auth/verify-email?token=${token}`;
 
         if (role === ROLES.DOCTOR) {
             await pool.query(
@@ -278,10 +288,21 @@ export const createUser = async (req, res) => {
             );
         }
 
-        return res.status(201).json({
+        res.status(201).json({
             success: true,
             message: "User created successfully",
             user_id: result.insertId
+        });
+
+        // send email AFTER response (non-blocking)
+        sendEmail(
+        email,
+        "Verify your email",
+                `<h3>Email Verification</h3>
+                <p>Click below to verify:</p>
+                <a href="${verifyLink}">${verifyLink}</a>`
+            ).catch(err => {
+            console.error("Email failed:", err.message);
         });
 
     } catch (err) {
@@ -328,6 +349,10 @@ export const createAdminUser = async (req, res) => {
             return res.status(400).json({ success: false, message: "Passwords do not match" });
         }
 
+        // generate token
+        const token = crypto.randomBytes(32).toString("hex");
+        const expiry = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
         // IMAGE
         let profile_image = null;
 
@@ -367,6 +392,19 @@ export const createAdminUser = async (req, res) => {
             success: true,
             message: "Admin created user successfully",
             user_id: result.insertId
+        });
+
+        const verifyLink = `${process.env.BASE_URL}/api/auth/verify-email?token=${token}`;
+
+        // send email AFTER response (non-blocking)
+        sendEmail(
+        email,
+        "Verify your email",
+                `<h3>Email Verification</h3>
+                <p>Click below to verify:</p>
+                <a href="${verifyLink}">${verifyLink}</a>`
+            ).catch(err => {
+            console.error("Email failed:", err.message);
         });
 
     } catch (err) {

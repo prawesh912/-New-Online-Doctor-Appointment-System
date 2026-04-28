@@ -70,3 +70,84 @@ export const login = async (req, res) => {
         });
     }
 };
+
+// VERIFY EMAIL
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    const [users] = await pool.query(
+      `SELECT * FROM users WHERE emailVerificationToken = ?`,
+      [token]
+    );
+
+    if (users.length === 0) {
+      return res.status(400).json({ message: "Invalid token" });
+    }
+
+    const user = users[0];
+
+    if (new Date() > new Date(user.emailVerificationExpires)) {
+      return res.status(400).json({ message: "Token expired" });
+    }
+
+    await pool.query(
+      `UPDATE users 
+       SET email_verified = 1, emailVerificationToken = NULL, emailVerificationExpires = NULL
+       WHERE id = ?`,
+      [user.id]
+    );
+
+    res.send("Email verified successfully");
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// RESEND VERIFICATION EMAIL
+export const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const [users] = await pool.query(
+      `SELECT * FROM users WHERE email = ?`,
+      [email]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const user = users[0];
+
+    if (user.email_verified) {
+      return res.json({ message: "Email already verified" });
+    }
+
+    // generate new token
+    const token = crypto.randomBytes(32).toString("hex");
+    const expiry = new Date(Date.now() + 1000 * 60 * 60);
+
+    await pool.query(
+      `UPDATE users 
+       SET emailVerificationToken = ?, emailVerificationExpires = ?
+       WHERE id = ?`,
+      [token, expiry, user.id]
+    );
+
+    const verifyLink = `${process.env.BASE_URL}/api/auth/verify-email?token=${token}`;
+
+    await sendEmail(
+      email,
+      "Resend Email Verification",
+      `<p>Click below to verify your email:</p>
+       <a href="${verifyLink}">${verifyLink}</a>`
+    );
+
+    res.json({ message: "Verification email resent" });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

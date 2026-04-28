@@ -33,3 +33,6 @@ CREATE TABLE appointments (
     FOREIGN KEY (receptionist_id) REFERENCES users(id),
     FOREIGN KEY (slot_id) REFERENCES generated_slots(id)
 );
+
+-- ALTER TABLE appointments
+-- ADD UNIQUE KEY unique_booking (doctor_id, appointment_date, appointment_time);
