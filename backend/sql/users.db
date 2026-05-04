@@ -20,6 +20,8 @@ CREATE TABLE users (
     email_verified BOOLEAN DEFAULT FALSE;
     emailVerificationToken VARCHAR(255),
     emailVerificationExpires DATETIME,
+    otp VARCHAR(6),
+    otp_expiry DATETIME,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
