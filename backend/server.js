@@ -6,6 +6,8 @@ import cors from 'cors';
 import session from 'express-session';
 import status from 'express-status-monitor';
 import MySQLStore from "express-mysql2-session";
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUI from 'swagger-ui-express';
 import { pool, connectDB } from "./config/db_config.js";
 
 import test from './routes/test_routes.js';
@@ -20,6 +22,7 @@ import doctorKYC from './routes/doctor_kyc_routes.js';
 import adminDoctorKYCVerification from './routes/admin_doctor_kyc_verification_routes.js';
 import clinics from './routes/clinic_routes.js';
 import appointments from './routes/appointment_routes.js';
+import payments from './routes/payment_routes.js';
 
 dotenv.config();
 
@@ -108,13 +111,40 @@ if (cluster.isPrimary) {
   
   //* Session END *//
 
+  const swaggerOptions = {
+    swaggerDefinition: {
+      info: {
+        title: 'Online doctor appointment system',
+        version: '1.0.0' 
+      }
+    },
+    apis: ['server.js']
+  }
 
+  const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+  /**
+   * @swagger
+   * /api/test:
+   *  post:
+   *    description: Get all books
+   *    parameters:
+   *    - name: title
+   *      description: title 
+   *      in: formData
+   *      required: true
+   *      type: string
+   *    responses:
+   *      200:
+   *        description: Success
+   */
   app.use(status());
   app.use(express.urlencoded({ extended: false }));
   app.use(cors({ origin: "*" }));
   app.use(express.json());
   // app.use(express.static('uploads'));
 
+  app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
   app.use('/api/test', test);
   app.use('/api/auth', auth);
   app.use('/api/users', users);
@@ -127,6 +157,7 @@ if (cluster.isPrimary) {
   app.use('/api/admin-doctor-kyc', adminDoctorKYCVerification);
   app.use('/api/clinics', clinics);
   app.use('/api/appointments', appointments);
+  app.use('/api/payment', payments);
 
   app.use((err, req, res, next) => {
     console.error(err.stack);
