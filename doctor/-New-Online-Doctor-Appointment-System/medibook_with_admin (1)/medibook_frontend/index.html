@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediBook – Find Doctors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/doctors.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="logo" href="index.html">
+      <div class="logo-icon">+</div>
+      MediBook
+    </a>
+    <div class="nav-center">
+      <a href="index.html"        class="nav-center-link active">Find Doctors</a>
+      <a href="appointments.html" class="nav-center-link">My Appointments</a>
+      <a href="admin.html"        class="nav-center-link">Admin</a>
+    </div>
+    <div class="nav-right">
+      <button class="toggle-btn" id="darkToggle" title="Toggle dark mode">🌙</button>
+      <div id="guestNav" style="display:flex; gap:8px; align-items:center;">
+        <a href="login.html"    class="nav-btn">Login</a>
+        <a href="register.html" class="nav-btn primary">Book Now</a>
+      </div>
+      <div id="userNav" style="display:none; align-items:center; gap:10px;">
+        <a href="admin.html" class="nav-btn primary">⚕️ Admin</a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatarBtn" onclick="toggleDropdown()">JD</div>
+          <div class="user-dropdown" id="userDropdown">
+            <a href="appointments.html" class="dd-item">📅 My Appointments</a>
+            <a href="admin.html"        class="dd-item">⚙️ Admin Panel</a>
+            <div class="dd-item danger" onclick="signOut()">🚪 Sign Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="page-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="filter-sidebar">
+      <div class="filter-header">
+        <span class="filter-title">Filters</span>
+        <button class="filter-clear" onclick="clearAllFilters()">Clear All</button>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-label">SPECIALTY</div>
+        <label class="filter-check"><input type="checkbox" value="Cardiology"   onchange="filterDoctors()"> Cardiology</label>
+        <label class="filter-check"><input type="checkbox" value="Neurology"    onchange="filterDoctors()"> Neurology</label>
+        <label class="filter-check"><input type="checkbox" value="Dermatology"  onchange="filterDoctors()"> Dermatology</label>
+        <label class="filter-check"><input type="checkbox" value="Dentistry"    onchange="filterDoctors()"> Dentistry</label>
+        <label class="filter-check"><input type="checkbox" value="Pediatrics"   onchange="filterDoctors()"> Pediatrics</label>
+        <label class="filter-check"><input type="checkbox" value="Orthopedics"  onchange="filterDoctors()"> Orthopedics</label>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-label">AVAILABILITY</div>
+        <label class="filter-radio"><input type="radio" name="avail" value="all"   onchange="filterDoctors()" checked> All Slots</label>
+        <label class="filter-radio"><input type="radio" name="avail" value="avail" onchange="filterDoctors()"> Available Only</label>
+        <label class="filter-radio"><input type="radio" name="avail" value="busy"  onchange="filterDoctors()"> Busy</label>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-group-label">MINIMUM RATING</div>
+        <div class="rating-pills">
+          <button class="rating-pill active" data-min="0"   onclick="setRating(this, 0)">Any</button>
+          <button class="rating-pill"        data-min="4.5" onclick="setRating(this, 4.5)">4.5+</button>
+          <button class="rating-pill"        data-min="4.7" onclick="setRating(this, 4.7)">4.7+</button>
+          <button class="rating-pill"        data-min="4.9" onclick="setRating(this, 4.9)">4.9+</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="doctors-main">
+      <div class="doctors-topbar">
+        <div>
+          <h1 class="page-title">Available Doctors</h1>
+          <p class="page-sub" id="resultCount">Showing all specialists</p>
+        </div>
+        <div class="topbar-right">
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-input"
+              placeholder="Search doctors or specialties..." oninput="filterDoctors()" />
+          </div>
+          <div class="sort-wrap">
+            <span class="sort-label">SORT BY:</span>
+            <select class="sort-select" onchange="filterDoctors()" id="sortSelect">
+              <option value="recommended">Recommended</option>
+              <option value="rating">Highest Rated</option>
+              <option value="fee_asc">Lowest Fee</option>
+              <option value="fee_desc">Highest Fee</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="spec-tabs" id="specFilter">
+        <button class="spec-tab active" onclick="filterSpec(this, 'All')">All</button>
+        <button class="spec-tab" onclick="filterSpec(this, 'Cardiology')">❤️ Cardiology</button>
+        <button class="spec-tab" onclick="filterSpec(this, 'Neurology')">🧠 Neurology</button>
+        <button class="spec-tab" onclick="filterSpec(this, 'Dentistry')">🦷 Dentistry</button>
+        <button class="spec-tab" onclick="filterSpec(this, 'Pediatrics')">👶 Pediatrics</button>
+        <button class="spec-tab" onclick="filterSpec(this, 'Orthopedics')">🦴 Orthopedics</button>
+        <button class="spec-tab" onclick="filterSpec(this, 'Dermatology')">🌿 Dermatology</button>
+      </div>
+
+      <div class="doctors-list" id="doctorsGrid"></div>
+
+      <div class="load-more-wrap">
+        <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()" style="display:none;">
+          Load More Specialists ↓
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- BOOKING MODAL -->
+  <div class="modal-bg" id="bookModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="doc-modal-top">
+        <div class="doc-modal-avatar" id="modalAvatar"></div>
+        <div>
+          <span class="badge" id="modalSpec"></span>
+          <div id="modalName" style="font-size:20px;font-weight:700;margin:6px 0 2px;"></div>
+          <div id="modalExp"  style="font-size:13px;color:var(--sub);"></div>
+          <div id="modalRating" style="font-size:13px;margin-top:4px;"></div>
+        </div>
+      </div>
+      <hr class="divider" />
+      <div class="form-group">
+        <label>Select Date</label>
+        <input type="date" id="bookDate" />
+      </div>
+      <p style="font-size:14px;font-weight:600;margin-bottom:8px;">Available Time Slots</p>
+      <div class="time-slots" id="timeSlots"></div>
+      <div class="form-group">
+        <label>Reason for Visit</label>
+        <input type="text" id="visitReason" placeholder="Brief description of your symptoms..." />
+      </div>
+      <button class="btn full" onclick="confirmBook()">Confirm Appointment</button>
+      <div id="modalFee" style="text-align:center;font-size:13px;color:var(--sub);margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="js/app.js"></script>
+  <script src="js/doctors.js"></script>
+</body>
+</html>

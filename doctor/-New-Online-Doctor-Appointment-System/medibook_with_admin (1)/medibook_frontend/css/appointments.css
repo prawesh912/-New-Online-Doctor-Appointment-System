@@ -1,0 +1,134 @@
+/* =============================================
+   MediBook - Appointments Page Styles
+   File: css/appointments.css
+============================================= */
+
+/* --- APPOINTMENTS LIST --- */
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+/* --- APPOINTMENT CARD --- */
+.appt-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s;
+}
+
+.appt-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.appt-avatar {
+  font-size: 40px;
+  width: 64px;
+  height: 64px;
+  background: var(--badge-bg);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.appt-info {
+  flex: 1;
+}
+
+.appt-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.appt-spec {
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.appt-time {
+  font-size: 13px;
+  color: var(--sub);
+  line-height: 1.6;
+}
+
+.appt-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* --- STATUS BADGES --- */
+.appt-status {
+  font-size: 12px;
+  padding: 5px 13px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.appt-status.confirmed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.appt-status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.appt-status.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Dark mode overrides */
+.dark .appt-status.confirmed {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+.dark .appt-status.pending {
+  background: #451a03;
+  color: #fbbf24;
+}
+
+.dark .appt-status.cancelled {
+  background: #450a0a;
+  color: #fca5a5;
+}
+
+.appt-fee {
+  font-size: 13px;
+  color: var(--sub);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* --- CANCEL BUTTON --- */
+.btn-cancel {
+  background: none;
+  border: 1px solid var(--red);
+  color: var(--red);
+  padding: 5px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background: var(--red);
+  color: #fff;
+}

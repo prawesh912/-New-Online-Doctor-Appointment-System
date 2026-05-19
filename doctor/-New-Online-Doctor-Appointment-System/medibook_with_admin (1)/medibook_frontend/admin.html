@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediBook – Admin Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <nav>
+    <a class="logo" href="index.html">
+      <div class="logo-icon">+</div>
+      MediBook
+    </a>
+    <div class="nav-links">
+      <button class="toggle-btn" id="darkToggle" title="Toggle dark mode">🌙</button>
+      <div id="guestNav" style="display:flex; gap:8px;">
+        <a href="login.html"    class="nav-btn">Sign In</a>
+        <a href="register.html" class="nav-btn primary">Register</a>
+      </div>
+      <div id="userNav" style="display:none; align-items:center; gap:10px;">
+        <a href="index.html"        class="nav-btn">Find Doctors</a>
+        <a href="appointments.html" class="nav-btn">My Appointments</a>
+        <a href="admin.html"        class="nav-btn primary">⚕️ Admin</a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatarBtn" onclick="toggleDropdown()">JD</div>
+          <div class="user-dropdown" id="userDropdown">
+            <a href="appointments.html" class="dd-item">📅 Appointments</a>
+            <a href="admin.html"        class="dd-item">⚙️ Admin Panel</a>
+            <div class="dd-item danger" onclick="signOut()">🚪 Sign Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ PAGE CONTENT ══════════ -->
+  <div class="admin-layout">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-role-badge">Doctor Portal</div>
+        <div class="sidebar-doc-name" id="sidebarDocName">Loading...</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="sidebar-link active" href="#" onclick="showTab('pending', this)">
+          <span class="sidebar-icon">⏳</span> Pending
+          <span class="sidebar-count" id="countPending">0</span>
+        </a>
+        <a class="sidebar-link" href="#" onclick="showTab('confirmed', this)">
+          <span class="sidebar-icon">✅</span> Confirmed
+          <span class="sidebar-count" id="countConfirmed">0</span>
+        </a>
+        <a class="sidebar-link" href="#" onclick="showTab('cancelled', this)">
+          <span class="sidebar-icon">❌</span> Cancelled
+          <span class="sidebar-count" id="countCancelled">0</span>
+        </a>
+        <a class="sidebar-link" href="#" onclick="showTab('all', this)">
+          <span class="sidebar-icon">📋</span> All Appointments
+          <span class="sidebar-count" id="countAll">0</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-stats">
+        <div class="sidebar-stat">
+          <div class="sidebar-stat-n" id="statToday">0</div>
+          <div class="sidebar-stat-l">Today</div>
+        </div>
+        <div class="sidebar-stat">
+          <div class="sidebar-stat-n" id="statWeek">0</div>
+          <div class="sidebar-stat-l">This Week</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN ── -->
+    <main class="admin-main">
+
+      <!-- Top bar -->
+      <div class="admin-topbar">
+        <div>
+          <h1 class="admin-title" id="adminTitle">Pending Appointments</h1>
+          <p class="admin-subtitle">Review and manage patient appointment requests</p>
+        </div>
+        <div class="admin-search-wrap">
+          <input
+            type="text"
+            id="adminSearch"
+            class="admin-search"
+            placeholder="Search patient or reason..."
+            oninput="renderAdminList()"
+          />
+        </div>
+      </div>
+
+      <!-- Filter chips -->
+      <div class="admin-filters" id="adminFilters">
+        <div class="filter-chip active" onclick="filterByDoctor(this, 'All')">All Doctors</div>
+      </div>
+
+      <!-- Appointments list -->
+      <div id="adminList" class="admin-list">
+        <div class="empty-state">
+          <div class="big">⏳</div>
+          <p>Loading appointments...</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══════════════ DETAIL MODAL ══════════ -->
+  <div class="modal-bg" id="detailModal">
+    <div class="modal admin-modal">
+      <button class="modal-close" onclick="closeDetailModal()">✕</button>
+      <div class="admin-modal-header">
+        <div class="admin-modal-avatar" id="detailAvatar"></div>
+        <div>
+          <div class="admin-modal-patient" id="detailPatient"></div>
+          <div class="admin-modal-doc" id="detailDoc"></div>
+        </div>
+      </div>
+      <div class="admin-modal-grid">
+        <div class="admin-modal-field">
+          <span class="admin-modal-label">📅 Date</span>
+          <span class="admin-modal-value" id="detailDate"></span>
+        </div>
+        <div class="admin-modal-field">
+          <span class="admin-modal-label">⏰ Time</span>
+          <span class="admin-modal-value" id="detailTime"></span>
+        </div>
+        <div class="admin-modal-field">
+          <span class="admin-modal-label">💬 Reason</span>
+          <span class="admin-modal-value" id="detailReason"></span>
+        </div>
+        <div class="admin-modal-field">
+          <span class="admin-modal-label">💲 Fee</span>
+          <span class="admin-modal-value" id="detailFee"></span>
+        </div>
+        <div class="admin-modal-field">
+          <span class="admin-modal-label">🏷 Status</span>
+          <span class="admin-modal-value" id="detailStatus"></span>
+        </div>
+        <div class="admin-modal-field">
+          <span class="admin-modal-label">🆔 ID</span>
+          <span class="admin-modal-value" id="detailId"></span>
+        </div>
+      </div>
+
+      <div class="admin-modal-notes">
+        <label class="admin-modal-label">📝 Doctor Notes (optional)</label>
+        <textarea id="detailNotes" placeholder="Add internal notes about this appointment..." rows="3"></textarea>
+      </div>
+
+      <div class="admin-modal-actions" id="detailActions"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TOAST ══════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════ SCRIPTS ════════════════ -->
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+
+</body>
+</html>

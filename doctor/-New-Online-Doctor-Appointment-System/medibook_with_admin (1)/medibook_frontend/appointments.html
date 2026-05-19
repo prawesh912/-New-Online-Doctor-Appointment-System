@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediBook – My Appointments</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/appointments.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <nav>
+    <a class="logo" href="index.html">
+      <div class="logo-icon">+</div>
+      MediBook
+    </a>
+    <div class="nav-links">
+      <button class="toggle-btn" id="darkToggle" title="Toggle dark mode">🌙</button>
+      <div id="guestNav" style="display:flex; gap:8px;">
+        <a href="login.html"    class="nav-btn">Sign In</a>
+        <a href="register.html" class="nav-btn primary">Register</a>
+      </div>
+      <div id="userNav" style="display:none; align-items:center; gap:10px;">
+        <a href="index.html"        class="nav-btn">Find Doctors</a>
+        <a href="appointments.html" class="nav-btn primary">My Appointments</a>
+        <a href="admin.html"        class="nav-btn">⚕️ Admin</a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatarBtn" onclick="toggleDropdown()">JD</div>
+          <div class="user-dropdown" id="userDropdown">
+            <a href="appointments.html" class="dd-item">📅 Appointments</a>
+            <a href="admin.html"        class="dd-item">⚙️ Admin Panel</a>
+            <div class="dd-item danger" onclick="signOut()">🚪 Sign Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ PAGE CONTENT ══════════ -->
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h1>My Appointments</h1>
+        <p>Manage all your upcoming and past bookings</p>
+      </div>
+      <a href="index.html" class="btn sm outline">+ Book New</a>
+    </div>
+
+    <!-- Appointments will be injected here by appointments.js -->
+    <div class="appointments-list" id="apptList">
+      <div class="empty-state">
+        <div class="big">⏳</div>
+        <p>Loading appointments...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TOAST ══════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <script src="js/app.js"></script>
+  <script src="js/appointments.js"></script>
+
+</body>
+</html>
