@@ -1,0 +1,144 @@
+/* =============================================
+   MediBook - Auth Pages Styles (Login & Register)
+   File: css/auth.css
+============================================= */
+
+/* --- AUTH PAGE WRAPPER --- */
+.auth-page {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+/* --- FORM CARD OVERRIDES --- */
+.auth-page .form-wrap {
+  margin: 0;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* --- LOGO IN FORM --- */
+.form-logo {
+  font-size: 44px;
+  margin-bottom: 10px;
+  display: block;
+  text-align: center;
+}
+
+/* --- SOCIAL LOGIN BUTTONS (decorative) --- */
+.social-btns {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.social-btn {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.social-btn:hover {
+  border-color: var(--accent);
+  background: var(--badge-bg);
+}
+
+/* --- OR DIVIDER --- */
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--sub);
+  font-size: 13px;
+}
+
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
+}
+
+/* --- FORGOT PASSWORD LINK --- */
+.forgot-link {
+  text-align: right;
+  font-size: 13px;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.forgot-link a {
+  color: var(--accent);
+}
+
+/* --- INLINE ALERT --- */
+.alert {
+  padding: 12px 16px;
+  border-radius: 9px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.alert.show {
+  display: block;
+}
+
+.alert.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.alert.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.dark .alert.error {
+  background: #450a0a;
+  color: #fca5a5;
+  border-color: #7f1d1d;
+}
+
+.dark .alert.success {
+  background: #064e3b;
+  color: #6ee7b7;
+  border-color: #065f46;
+}
+
+/* --- PASSWORD STRENGTH --- */
+.password-strength {
+  height: 4px;
+  border-radius: 4px;
+  margin-top: 6px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.password-strength-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s, background 0.3s;
+  width: 0%;
+}
+
+.strength-label {
+  font-size: 11px;
+  margin-top: 4px;
+  color: var(--sub);
+}
