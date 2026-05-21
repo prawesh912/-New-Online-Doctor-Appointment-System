@@ -22,7 +22,7 @@ export const getAllUsers = async (req, res) => {
                 province, district, city, ward, tole, email, 
                 phone_number, profile_image, role, category_id, 
                 is_active, email_verified, created_at
-             FROM users
+             FROM users WHERE role != 'admin'
         `;
         let countQuery = `SELECT COUNT(*) as total FROM users`;
         let queryParams = [];
@@ -375,20 +375,20 @@ export const createAdminUser = async (req, res) => {
 
         const [result] = await pool.query(
             `INSERT INTO users 
-            (first_name,last_name,gender,dob_bs,dob_ad,province,district,city,ward,tole,email,phone_number,profile_image,role,category_id,password)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            (first_name,last_name,gender,dob_bs,dob_ad,province,district,city,ward,tole,email,phone_number,profile_image,role,password)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
             [
                 first_name, last_name, gender,
                 dob_bs, dob_ad,
                 province, district, city, ward, tole,
                 email, phone_number,
                 profile_image,
-                role, category_id,
+                'admin',
                 hashedPassword
             ]
         );
-
-        return res.status(201).json({
+        // console.log("Sending response");
+        res.status(201).json({
             success: true,
             message: "Admin created user successfully",
             user_id: result.insertId
@@ -396,7 +396,14 @@ export const createAdminUser = async (req, res) => {
 
         const verifyLink = `${process.env.BASE_URL}/api/auth/verify-email?token=${token}`;
 
+        const [resultToken] = await pool.query(
+            `UPDATE users SET emailVerificationToken=?,emailVerificationExpires=? WHERE id=?`, [token, expiry, result.insertId]
+        );
+
+        console.log(resultToken);
+
         // send email AFTER response (non-blocking)
+        // console.log(`sending email ${email} with link: ${verifyLink}`);
         sendEmail(
         email,
         "Verify your email",
@@ -406,7 +413,7 @@ export const createAdminUser = async (req, res) => {
             ).catch(err => {
             console.error("Email failed:", err.message);
         });
-
+        // console.log(`${verifyLink} send to ${email}`);
     } catch (err) {
         return res.status(500).json({ success: false, message: err.message });
 

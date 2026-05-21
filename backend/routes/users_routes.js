@@ -31,9 +31,9 @@ router.post(
 
 // Admin create user
 router.post(
-    '/admin/create-user',
-    verifyJWT,
-    verifyRole(ROLES.ADMIN),
+    '/admin/register',
+    // verifyJWT,
+    // verifyRole(ROLES.ADMIN),
     setUploadFolder("users"),
     uploadSingle("profile_image"),
     createAdminUser

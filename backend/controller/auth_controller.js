@@ -174,8 +174,8 @@ export const sendForgotPasswordOTP = async (req, res) => {
     const OTP_expiry = new Date(Date.now() + 1000 * 60 * 60); // 10 min
 
     await pool.query(
-      `UPDATE users SET otp = ?, otp_expiry = ? where id = ?`,
-      [OTP, OTP_expiry, foundUser[0].id]
+      `UPDATE users SET otp = ?, otp_expiry = ?, is_reset_password_token = ? where id = ?`,
+      [OTP, OTP_expiry, 0, foundUser[0].id]
     );
 
     await sendEmail(
@@ -211,8 +211,8 @@ export const resendForgotPasswordOTP = async (req, res) => {
     const OTP_expiry = new Date(Date.now() + 1000 * 60 * 60); // 10 min
 
     await pool.query(
-      `UPDATE users SET otp = ?, otp_expiry = ? where id = ?`,
-      [OTP, OTP_expiry, foundUser.id]
+      `UPDATE users SET otp = ?, otp_expiry = ?, is_reset_password_token = ? where id = ?`,
+      [OTP, OTP_expiry, 0, foundUser[0].id]
     );
 
     await sendEmail(
@@ -261,8 +261,8 @@ export const verifyOTP = async (req, res) => {
 
     // 6. Success logic
     await pool.query(
-      `UPDATE users SET otp = NULL, otp_expiry = NULL WHERE id = ?`,
-      [user.id]
+      `UPDATE users SET otp = NULL, otp_expiry = NULL, is_reset_password_token = ?  WHERE id = ?`,
+      [false, user.id]
     );
 
     const resetPasswordToken = jwt.sign(
@@ -299,16 +299,22 @@ export const resetPassword = async (req, res) => {
         return res.status(400).json({ success: false, message: "Passwords do not match" });
     }
 
+    
     // Verify the token
     const decoded = jwt.verify(reset_password_token, process.env.JWT_SECRET);
+
+    // Check if password all reset
+    const [isResetPasswordToken] = await pool.query(`SELECT is_reset_password_token from users WHERE id = ?`, [decoded.userId])
+
+    if(isResetPasswordToken) return res.status(400).json({success: true, message: "Password has been reset"});
 
     // Hash the new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update the database
     await pool.query(
-      `UPDATE users SET password = ? WHERE id = ?`, 
-      [hashedPassword, decoded.userId]
+      `UPDATE users SET password = ?, is_reset_password_token = ? WHERE id = ?`, 
+      [hashedPassword, true, decoded.userId]
     );
 
     return res.status(200).json({ 
