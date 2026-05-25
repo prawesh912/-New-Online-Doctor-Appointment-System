@@ -23,6 +23,11 @@ import adminDoctorKYCVerification from './routes/admin_doctor_kyc_verification_r
 import clinics from './routes/clinic_routes.js';
 import appointments from './routes/appointment_routes.js';
 import payments from './routes/payment_routes.js';
+import clinicSearch from './routes/clinic_search_routes.js';
+import reviews from './routes/review_routes.js';
+import earnings from './routes/earning_routes.js';
+import holidays from './routes/holiday_routes.js';
+import doctorSchedule from './routes/doctor_schedule_routes.js';
 
 dotenv.config();
 
@@ -113,31 +118,34 @@ if (cluster.isPrimary) {
 
   const swaggerOptions = {
     swaggerDefinition: {
+      openapi: '3.0.0',
       info: {
-        title: 'Online doctor appointment system',
+        title: 'Online Doctor Appointment System',
+        description: 'Comprehensive API Documentation for Patients, Doctors, and Receptionists',
         version: '1.0.0' 
+      },
+      servers: [
+        {
+          url: 'http://localhost:8000',
+          description: 'Development Server'
+        }
+      ],
+      components: {
+        securitySchemes: {
+          BearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            description: 'Enter your JWT token here to authenticate'
+          }
+        }
       }
     },
-    apis: ['server.js']
+    apis: ['./server.js', './routes/*.js', './controller/*.js']
   }
 
   const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-  /**
-   * @swagger
-   * /api/test:
-   *  post:
-   *    description: Get all books
-   *    parameters:
-   *    - name: title
-   *      description: title 
-   *      in: formData
-   *      required: true
-   *      type: string
-   *    responses:
-   *      200:
-   *        description: Success
-   */
   app.use(status());
   app.use(express.urlencoded({ extended: false }));
   app.use(cors({ origin: "*" }));
@@ -148,6 +156,7 @@ if (cluster.isPrimary) {
   app.use('/api/test', test);
   app.use('/api/auth', auth);
   app.use('/api/users', users);
+  app.use('/api/user', users);
   app.use('/api/category', category);
   app.use('/api/doctors', doctor);
   app.use('/api/receptionists', receptionists);
@@ -155,9 +164,16 @@ if (cluster.isPrimary) {
   app.use('/api/document-categories', documentCategories);
   app.use('/api/doctor-kyc', doctorKYC);
   app.use('/api/admin-doctor-kyc', adminDoctorKYCVerification);
+  
+  // Note: mount clinicSearch before clinics to prevent route parameter collision (e.g. /search vs /:id)
+  app.use('/api/clinics', clinicSearch);
+  app.use('/api/clinics', holidays);
   app.use('/api/clinics', clinics);
   app.use('/api/appointments', appointments);
   app.use('/api/payment', payments);
+  app.use('/api/reviews', reviews);
+  app.use('/api/earnings', earnings);
+  app.use('/api/doctor-schedule', doctorSchedule);
 
   app.use((err, req, res, next) => {
     console.error(err.stack);

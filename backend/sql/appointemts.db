@@ -35,4 +35,4 @@ CREATE TABLE appointments (
 );
 
 -- ALTER TABLE appointments
--- ADD UNIQUE KEY unique_booking (doctor_id, appointment_date, appointment_time);
+-- ADD KEY idx_doctor_id (doctor_id);
