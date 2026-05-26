@@ -1,0 +1,31 @@
+CREATE TABLE doctor_kyc (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+
+    category_id INT NOT NULL,
+
+    nmc_registration_number VARCHAR(50) UNIQUE,
+    nmc_registration_date DATE,
+    council_name VARCHAR(150) DEFAULT 'Nepal Medical Council',
+
+    years_experience INT DEFAULT 0,
+
+    status ENUM('draft','pending','under_review','verified','rejected'),
+
+    is_submitted BOOLEAN DEFAULT FALSE, -- NEW
+
+    verified_by INT NULL,
+    verified_at TIMESTAMP NULL,
+    rejection_reason TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
+    FOREIGN KEY (verified_by) REFERENCES users(id),
+
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status),
+    INDEX idx_category (category_id)
+);

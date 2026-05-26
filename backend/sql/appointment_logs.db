@@ -1,0 +1,14 @@
+CREATE TABLE appointment_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    changed_by INT NOT NULL,
+
+    old_status VARCHAR(50),
+    new_status VARCHAR(50),
+
+    comment TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (appointment_id) REFERENCES appointments(id) ON DELETE CASCADE
+);

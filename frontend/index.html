@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediBook – Find Doctors</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/doctors.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <nav>
+    <a class="logo" href="index.html">
+      <div class="logo-icon">+</div>
+      MediBook
+    </a>
+    <div class="nav-links">
+      <button class="toggle-btn" id="darkToggle" title="Toggle dark mode">🌙</button>
+
+      <!-- Guest nav (shown when not logged in) -->
+      <div id="guestNav" style="display:flex; gap:8px;">
+        <a href="login.html"    class="nav-btn">Sign In</a>
+        <a href="register.html" class="nav-btn primary">Register</a>
+      </div>
+
+      <!-- User nav (shown when logged in) -->
+      <div id="userNav" style="display:none; align-items:center; gap:10px;">
+        <a href="index.html"        class="nav-btn">Find Doctors</a>
+        <a href="appointments.html" class="nav-btn">My Appointments</a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatarBtn" onclick="toggleDropdown()">JD</div>
+          <div class="user-dropdown" id="userDropdown">
+            <a href="appointments.html" class="dd-item">📅 Appointments</a>
+            <div class="dd-item danger" onclick="signOut()">🚪 Sign Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ HERO ══════════════════ -->
+  <div class="hero">
+    <h1>Find &amp; Book <span>Top Doctors</span><br>Near You</h1>
+    <p>Connect with the best specialists and book appointments instantly, from the comfort of your home.</p>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by doctor name or specialty..."
+        oninput="filterDoctors()"
+      />
+      <button class="btn" onclick="filterDoctors()">Search</button>
+    </div>
+
+    <!-- Specialty Filter Chips -->
+    <div class="specialties" id="specFilter">
+      <div class="spec-chip active" onclick="filterSpec(this, 'All')">All</div>
+      <div class="spec-chip" onclick="filterSpec(this, 'Cardiology')">❤️ Cardiology</div>
+      <div class="spec-chip" onclick="filterSpec(this, 'Neurology')">🧠 Neurology</div>
+      <div class="spec-chip" onclick="filterSpec(this, 'Dentistry')">🦷 Dentistry</div>
+      <div class="spec-chip" onclick="filterSpec(this, 'Pediatrics')">👶 Pediatrics</div>
+      <div class="spec-chip" onclick="filterSpec(this, 'Orthopedics')">🦴 Orthopedics</div>
+      <div class="spec-chip" onclick="filterSpec(this, 'Dermatology')">🌿 Dermatology</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ STATS ══════════════════ -->
+  <div class="stats">
+    <div class="stat"><div class="stat-n">200+</div><div class="stat-l">Doctors</div></div>
+    <div class="stat"><div class="stat-n">50K+</div><div class="stat-l">Patients Served</div></div>
+    <div class="stat"><div class="stat-n">4.9★</div><div class="stat-l">Average Rating</div></div>
+    <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Available Support</div></div>
+  </div>
+
+  <!-- ═══════════════ DOCTORS GRID ══════════ -->
+  <div class="container">
+    <div class="doctors-grid" id="doctorsGrid"></div>
+  </div>
+
+  <!-- ═══════════════ BOOKING MODAL ══════════ -->
+  <div class="modal-bg" id="bookModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+
+      <div class="doc-modal-top">
+        <div class="doc-modal-avatar" id="modalAvatar"></div>
+        <div>
+          <span class="badge" id="modalSpec"></span>
+          <div id="modalName" style="font-size:20px; font-weight:700; margin:6px 0 2px;"></div>
+          <div id="modalExp"  style="font-size:13px; color:var(--sub);"></div>
+          <div id="modalRating" style="font-size:13px; margin-top:4px;"></div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="form-group">
+        <label>Select Date</label>
+        <input type="date" id="bookDate" />
+      </div>
+
+      <p style="font-size:14px; font-weight:600; margin-bottom:8px;">Available Time Slots</p>
+      <div class="time-slots" id="timeSlots"></div>
+
+      <div class="form-group">
+        <label>Reason for Visit</label>
+        <input type="text" id="visitReason" placeholder="Brief description of your symptoms..." />
+      </div>
+
+      <button class="btn full" onclick="confirmBook()">Confirm Appointment</button>
+      <div id="modalFee" style="text-align:center; font-size:13px; color:var(--sub); margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TOAST ══════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════ SCRIPTS ══════════════════ -->
+  <script src="js/app.js"></script>
+  <script src="js/doctors.js"></script>
+
+</body>
+</html>

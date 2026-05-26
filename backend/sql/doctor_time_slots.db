@@ -1,0 +1,19 @@
+CREATE TABLE doctor_time_slots (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    doctor_id INT NOT NULL,
+    clinic_id INT NOT NULL,
+
+    day_of_week ENUM('sun','mon','tue','wed','thu','fri','sat') NOT NULL,
+
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+
+    slot_duration INT NOT NULL, -- in minutes (15, 30, 60)
+
+    is_active BOOLEAN DEFAULT TRUE,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (doctor_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (clinic_id) REFERENCES clinics(id) ON DELETE CASCADE
+);

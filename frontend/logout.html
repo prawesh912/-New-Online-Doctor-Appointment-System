@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediBook – Sign Out</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <nav>
+    <a class="logo" href="index.html">
+      <div class="logo-icon">+</div>
+      MediBook
+    </a>
+    <div class="nav-links">
+      <button class="toggle-btn" id="darkToggle" title="Toggle dark mode">🌙</button>
+      <div id="guestNav" style="display:flex; gap:8px;">
+        <a href="login.html"    class="nav-btn">Sign In</a>
+        <a href="register.html" class="nav-btn primary">Register</a>
+      </div>
+      <div id="userNav" style="display:none; align-items:center; gap:10px;">
+        <a href="index.html"        class="nav-btn">Find Doctors</a>
+        <a href="appointments.html" class="nav-btn">My Appointments</a>
+        <div class="user-menu">
+          <div class="user-avatar" id="userAvatarBtn" onclick="toggleDropdown()">JD</div>
+          <div class="user-dropdown" id="userDropdown">
+            <a href="appointments.html" class="dd-item">📅 Appointments</a>
+            <div class="dd-item danger" onclick="signOut()">🚪 Sign Out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ LOGOUT CARD ════════════ -->
+  <div class="auth-page">
+    <div class="form-wrap" id="logoutCard">
+
+      <div class="form-title">
+        <span class="form-logo">👋</span>
+        <h2 id="logoutTitle">Sign Out</h2>
+        <p  id="logoutSubtitle">Are you sure you want to sign out?</p>
+      </div>
+
+      <div id="userInfo" style="
+        background: var(--badge-bg);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+        margin-bottom: 24px;
+        display: none;
+      ">
+        <div id="userInfoAvatar" style="
+          width: 52px; height: 52px;
+          background: var(--accent);
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          color: var(--btn-text); font-weight: 700; font-size: 18px;
+          margin: 0 auto 10px;
+        "></div>
+        <div id="userInfoName"  style="font-weight:700; font-size:15px;"></div>
+        <div id="userInfoEmail" style="font-size:13px; color:var(--sub); margin-top:3px;"></div>
+      </div>
+
+      <!-- Buttons -->
+      <div id="logoutButtons" style="display:flex; flex-direction:column; gap:10px;">
+        <button class="btn" id="confirmLogoutBtn" onclick="performLogout()" style="background:var(--red);">
+          Yes, Sign Out
+        </button>
+        <a href="index.html" class="btn outline" style="display:block; text-align:center;">
+          Cancel — Stay Signed In
+        </a>
+      </div>
+
+      <!-- Already logged out state -->
+      <div id="alreadyLoggedOut" style="display:none; text-align:center;">
+        <p style="color:var(--sub); margin-bottom:20px;">You are not currently signed in.</p>
+        <a href="login.html"    class="btn" style="display:block; margin-bottom:10px;">Sign In</a>
+        <a href="register.html" class="btn outline" style="display:block;">Create Account</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════ TOAST ══════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = Auth.getUser();
+
+      if (!user) {
+        // Already logged out — show different state
+        document.getElementById('logoutTitle').textContent    = 'Already Signed Out';
+        document.getElementById('logoutSubtitle').textContent = 'You are not currently signed in.';
+        document.getElementById('logoutButtons').style.display      = 'none';
+        document.getElementById('alreadyLoggedOut').style.display   = 'block';
+        return;
+      }
+
+      // Show user info card
+      const infoCard = document.getElementById('userInfo');
+      infoCard.style.display = 'block';
+      document.getElementById('userInfoAvatar').textContent = user.initials;
+      document.getElementById('userInfoName').textContent   = user.name;
+      document.getElementById('userInfoEmail').textContent  = user.email;
+    });
+
+    function performLogout() {
+      Auth.clearUser();
+      showToast('You have been signed out.', '👋');
+
+      // Update UI to post-logout state
+      document.getElementById('logoutTitle').textContent    = 'Signed Out';
+      document.getElementById('logoutSubtitle').textContent = 'You have been successfully signed out.';
+      document.getElementById('userInfo').style.display     = 'none';
+      document.getElementById('logoutButtons').style.display      = 'none';
+      document.getElementById('alreadyLoggedOut').style.display   = 'block';
+
+      // Update navbar
+      document.getElementById('guestNav').style.display = 'flex';
+      document.getElementById('userNav').style.display  = 'none';
+
+      setTimeout(() => (window.location.href = 'index.html'), 1800);
+    }
+  </script>
+
+</body>
+</html>

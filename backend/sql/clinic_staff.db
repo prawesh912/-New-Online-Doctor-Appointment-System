@@ -1,0 +1,17 @@
+CREATE TABLE clinic_staff (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    clinic_id INT NOT NULL,
+    user_id INT NOT NULL, -- receptionist
+
+    role ENUM('receptionist') DEFAULT 'receptionist',
+
+    status ENUM('pending','active','rejected') DEFAULT 'pending',
+
+    hired_at TIMESTAMP NULL,
+    reason TEXT,
+
+    UNIQUE KEY unique_staff (clinic_id, user_id),
+
+    FOREIGN KEY (clinic_id) REFERENCES clinics(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

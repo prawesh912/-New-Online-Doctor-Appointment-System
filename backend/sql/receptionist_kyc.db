@@ -1,0 +1,19 @@
+CREATE TABLE receptionist_kyc (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE,
+
+    citizenship_number VARCHAR(50) NOT NULL,
+    issue_date DATE NOT NULL,
+    issue_district VARCHAR(50) NOT NULL,
+    citizenship_image VARCHAR(255) NOT NULL,
+
+    status ENUM('pending','verified','rejected') DEFAULT 'pending',
+
+    reason TEXT,
+    rejected_date DATE,
+
+    verified_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

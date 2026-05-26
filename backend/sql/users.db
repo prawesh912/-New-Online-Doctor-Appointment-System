@@ -1,0 +1,27 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(25) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    gender ENUM('male', 'female', 'others') NOT NULL,
+    dob_bs DATE,
+    dob_ad DATE,
+    province VARCHAR(25) NOT NULL,
+    district VARCHAR(25) NOT NULL,
+    city VARCHAR(25) NOT NULL,
+    ward INT NOT NULL,
+    tole VARCHAR(50),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone_number VARCHAR(20) NOT NULL UNIQUE,
+    profile_image VARCHAR(255),
+    role ENUM('patient', 'doctor', 'admin', 'receptionist') NOT NULL DEFAULT 'patient',
+    category_id INT NULL,
+    password VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    email_verified BOOLEAN DEFAULT FALSE;
+    emailVerificationToken VARCHAR(255),
+    emailVerificationExpires DATETIME,
+    otp VARCHAR(6),
+    otp_expiry DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);

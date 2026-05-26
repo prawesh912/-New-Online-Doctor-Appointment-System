@@ -1,0 +1,22 @@
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    to_user_id INT NOT NULL,
+    from_user_id INT NOT NULL,
+    transactionId VARCHAR(255) UNIQUE,
+    pidx VARCHAR(255) UNIQUE,
+    amount DECIMAL(13,4) NOT NULL CHECK (amount >= 0),
+    transaction_type ENUM('credit', 'debit') NOT NULL,
+    remarks VARCHAR(255) NOT NULL,
+    date_from_verification_req JSON,
+    api_query_from_user JSON,
+    payment_gateway ENUM('khalti', 'esewa') NOT NULL,
+    status ENUM('pending', 'completed', 'refunded') DEFAULT 'pending',
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (to_user_id) REFERENCES users(id),
+    FOREIGN KEY (from_user_id) REFERENCES users(id),
+
+    INDEX idx_to_user (to_user_id),
+    INDEX idx_from_user (from_user_id)
+)
